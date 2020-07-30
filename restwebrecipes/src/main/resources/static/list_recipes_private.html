@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <title>Psytrance Recipes!</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.4.1/css/all.css" integrity="sha384-5sAR7xN1Nv6T6+dT2mhtzEpVJvfS3NScPQTrOxhwjIuvcA67KV2R5Jz6kr4abQsz" crossorigin="anonymous">
+	<link rel="stylesheet" type="text/css" href="/css/main.css">
+</head>
+
+<body>
+<script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
+<script src="/js/main.js"></script>
+<script>
+if (typeof localStorage.token === "undefined"){
+	window.location.href = "index.html";	
+}
+</script>
+
+<nav class="navbar navbar-expand-md">
+  <button class="navbar-toggler navbar-dark" type="button" data-toggle="collapse" data-target="#main-navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+  <div class="collapse navbar-collapse" id="main-navigation">
+    <ul class="navbar-nav">
+
+      <li class="nav-item">
+       		<a class="nav-link" href="add_recipe.html">Nueva receta</a>
+      </li>
+      
+      <li class="nav-item">
+        <a class="nav-link" href="#" id="logout">Cerrar sesión</a>
+      </li> 
+      
+    </ul>
+  </div>
+</nav>
+
+<header class="page-header header container-fluid">
+<div class="overlay">
+    <div class="container my-2">
+        <div class="card-transparent">
+            <div class="card-body rounded" style="background-color: rgba(0, 0, 0, 0.4); ">
+                    <table class="table" id="tabla">
+						<tr>
+							<th>Nombre</th>							
+							<th>Dificultad</th>
+							<th>Foto</th>
+							<th>Ver</th>
+							<th>Editar</th>
+							<th>Borrar</th>
+						</tr>
+					</table>                   
+            </div>
+        </div>
+    </div>
+</div>
+</header>
+<script type="text/javascript">
+		$(document).ready(function() {
+			$.ajax({
+		        type: 'GET',
+		        url: 'http://localhost:8080/api/v1/receta',
+		        beforeSend: function(xhr) {
+		          if (localStorage.token) {
+		            xhr.setRequestHeader('Authorization', 'Bearer ' + localStorage.token);
+		          }
+		        },
+		        success: function(data) {		        	
+					var tr=[];
+					for (var i = 0; i < data.length; i++) {
+						tr.push('<tr>');
+						tr.push('<td>' + data[i].nombre + '</td>');
+						tr.push('<td>' + data[i].dificultad + '</td>');
+						tr.push('<td><img src="http://localhost:8080/api/v1/pic/'+data[i].foto+'" width="80" class="rounded"></td>');
+						tr.push('<td>');
+						tr.push('<a data-toggle="modal" data-target="#modalLong'+data[i].id+'" class="btn btn-primary"><i class="fas fa-glasses ml-2"></i></a>');
+						tr.push('<div class="modal fade" tabindex="-1" id="modalLong'+data[i].id+'" role="dialog">');
+						tr.push(' <div class="modal-dialog">');
+						tr.push('	<div class="modal-content">');
+						tr.push('		<div class="modal-header">');
+						tr.push('		  <h5 class="modal-title text-dark">Detalle de receta</h5>');
+						tr.push('		  <button type="button" class="close" data-dismiss="modal" aria-label="Cerrar">');
+						tr.push('		  	<span aria-hidden="true">&times;</span>');
+						tr.push('		  </button>');
+						tr.push('		</div>');
+						tr.push('		<div class="modal-body">');
+						tr.push('			<h4 class="text-dark">'+data[i].nombre+'</h4>');													
+						tr.push('           <p><img src="http://localhost:8080/api/v1/pic/'+data[i].foto+'" width="240" class="rounded"></p>');
+						tr.push('			<p class="text-dark">'+data[i].preparacion.replace(/(?:\r\n|\r|\n)/g, '<br>')+'</p>');
+						tr.push('		</div>');
+						tr.push('		<div class="modal-footer">');
+						tr.push('		  <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>');
+						tr.push('    	</div>');
+						tr.push('	 </div>');
+						tr.push('	</div>');
+						tr.push(' </div>');
+					 	tr.push('</td>');
+						
+						tr.push('<td> <a href=update_recipe.html?id=' + data[i].id + ' class="btn btn-primary"><i class="fas fa-edit ml-2"></i></a></td>');		
+						
+						tr.push('<td>');
+						tr.push('<a data-toggle="modal" data-target="#modalwarning'+data[i].id+'" class="btn btn-primary"> <i class="fas fa-trash-alt ml-2"></i></a>');
+						tr.push('<div class="modal modal-warning fade in" id="modalwarning'+data[i].id+'">');
+						tr.push(' <div class="modal-dialog">');
+						tr.push('	<div class="modal-content">');
+						tr.push('		<div class="modal-header">');
+						tr.push('			<h5 class="modal-title text-dark">¿Borrar esta receta?</h5>');
+						tr.push('			<button type="button" class="close" data-dismiss="modal" aria-label="Cerrar">');
+						tr.push('			<span aria-hidden="true">&times;</span></button>');
+						tr.push('		</div>');
+						tr.push('		<div class="modal-body">');
+						tr.push('			<h3 class="text-dark">'+data[i].nombre+'</h3>');
+						tr.push('		</div>');
+						tr.push('		<div class="modal-footer">');
+						tr.push('			<button type="button" class="btn btn-outline pull-left" data-dismiss="modal">No</button>');
+						tr.push('			<a type="button" class="btn btn-outline borrar" href="#" id='+data[i].id+'><i class="fa fa-check"></i>&nbsp;Yes</a>');
+						tr.push('		</div>');
+						tr.push('	</div>');
+						tr.push(' </div>');
+						tr.push('</div>	');				
+						tr.push('</td>');
+						
+						tr.push('</tr>');
+					}
+					$('#tabla').append($(tr.join('')));
+		        },
+		        error: function() {
+		          alert("Sorry, you are not logged in.");
+		        }
+		      });
+//			$.getJSON('http://localhost:8080/api/v1/receta', function(json) {
+
+//			});
+			
+
+			$(document).delegate('.borrar', 'click', function() { 
+						var id = $(this).attr('id');
+						var parent = $(this).parent().parent();
+						$.ajax({
+							type: "DELETE",
+							url: "http://localhost:8080/api/v1/receta/" + id,
+							cache: false,
+					        beforeSend: function(xhr) {
+					            if (localStorage.token) {
+					              xhr.setRequestHeader('Authorization', 'Bearer ' + localStorage.token);
+					            }
+					        },
+							success: function() {
+								parent.fadeOut('slow', function() {
+									$(this).remove();
+								});
+								location.reload(true)
+							}
+						});
+			});
+			
+			$('#logout').click(function() {	
+			      localStorage.clear();
+			      window.location.href = "index.html";
+			});
+			
+		});
+	</script>
+</body>
+</html>

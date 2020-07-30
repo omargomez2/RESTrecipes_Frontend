@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html>
 
 <head>
     <meta charset="utf-8">
@@ -9,7 +9,6 @@
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.4.1/css/all.css" integrity="sha384-5sAR7xN1Nv6T6+dT2mhtzEpVJvfS3NScPQTrOxhwjIuvcA67KV2R5Jz6kr4abQsz" crossorigin="anonymous">
 	<link rel="stylesheet" type="text/css" href="/css/main.css">
-
 </head>
 
 <body>
@@ -27,23 +26,9 @@
         <a class="nav-link" href="index.html">Inicio</a>
       </li>
 
-      	<li class="nav-item">
-       		<a class="nav-link" href="add_recipe.html">Nueva receta</a>
-      	</li>
-
       <li class="nav-item">
         <a class="nav-link" href="#">Acerca de</a>
       </li>
-      
-<!-- 
-       <li class="nav-item">
-        <a class="nav-link" href="/recetas/login">Iniciar sesión</a>
-       </li>
-
-       <li class="nav-item">
-        <a class="nav-link" href="/recetas/logout">Cerrar sesión</a>
-       </li> 
- -->
       
     </ul>
   </div>
@@ -51,7 +36,6 @@
 
 <header class="page-header header container-fluid">
 <div class="overlay">
-
     <div class="container my-2">
         <div class="card-transparent">
             <div class="card-body rounded" style="background-color: rgba(0, 0, 0, 0.4); ">
@@ -61,8 +45,6 @@
 							<th>Dificultad</th>
 							<th>Foto</th>
 							<th>Ver</th>
-							<th>Editar</th>
-							<th>Borrar</th>
 						</tr>
 					</table>                   
             </div>
@@ -72,16 +54,16 @@
 </header>
 <script type="text/javascript">
 		$(document).ready(function() {
-			$.getJSON('http://localhost:8080/api/v1/receta', function(json) {
+			$.getJSON('http://localhost:8080/api/v1/receta', function(data) {
 				var tr=[];
-				for (var i = 0; i < json.length; i++) {
+				for (var i = 0; i < data.length; i++) {
 					tr.push('<tr>');
-					tr.push('<td>' + json[i].nombre + '</td>');
-					tr.push('<td>' + json[i].dificultad + '</td>');
-					tr.push('<td><img src="http://localhost:8080/api/v1/pic/'+json[i].foto+'" width="80" class="rounded"></td>');
+					tr.push('<td>' + data[i].nombre + '</td>');
+					tr.push('<td>' + data[i].dificultad + '</td>');
+					tr.push('<td><img src="http://localhost:8080/api/v1/pic/'+data[i].foto+'" width="80" class="rounded"></td>');
 					tr.push('<td>');
-					tr.push('<a data-toggle="modal" data-target="#modalLong'+json[i].id+'" class="btn btn-primary"><i class="fas fa-glasses ml-2"></i></a>');
-					tr.push('<div class="modal fade" tabindex="-1" id="modalLong'+json[i].id+'" role="dialog">');
+					tr.push('<a data-toggle="modal" data-target="#modalLong'+data[i].id+'" class="btn btn-primary"><i class="fas fa-glasses ml-2"></i></a>');
+					tr.push('<div class="modal fade" tabindex="-1" id="modalLong'+data[i].id+'" role="dialog">');
 					tr.push(' <div class="modal-dialog">');
 					tr.push('	<div class="modal-content">');
 					tr.push('		<div class="modal-header">');
@@ -91,9 +73,9 @@
 					tr.push('		  </button>');
 					tr.push('		</div>');
 					tr.push('		<div class="modal-body">');
-					tr.push('			<h4 class="text-dark">'+json[i].nombre+'</h4>');													
-					tr.push('           <p><img src="http://localhost:8080/api/v1/pic/'+json[i].foto+'" width="240" class="rounded"></p>');
-					tr.push('			<p class="text-dark">'+json[i].preparacion.replace(/(?:\r\n|\r|\n)/g, '<br>')+'</p>');
+					tr.push('			<h4 class="text-dark">'+data[i].nombre+'</h4>');													
+					tr.push('           <p><img src="http://localhost:8080/api/v1/pic/'+data[i].foto+'" width="240" class="rounded"></p>');
+					tr.push('			<p class="text-dark">'+data[i].preparacion.replace(/(?:\r\n|\r|\n)/g, '<br>')+'</p>');
 					tr.push('		</div>');
 					tr.push('		<div class="modal-footer">');
 					tr.push('		  <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>');
@@ -101,55 +83,12 @@
 					tr.push('	 </div>');
 					tr.push('	</div>');
 					tr.push(' </div>');
-				 	tr.push('</td>');
-					
-					tr.push('<td> <a href=update_recipe.html?id=' + json[i].id + ' class="btn btn-primary"><i class="fas fa-edit ml-2"></i></a></td>');		
-					
-					tr.push('<td>');
-					tr.push('<a data-toggle="modal" data-target="#modalwarning'+json[i].id+'" class="btn btn-primary"> <i class="fas fa-trash-alt ml-2"></i></a>');
-					tr.push('<div class="modal modal-warning fade in" id="modalwarning'+json[i].id+'">');
-					tr.push(' <div class="modal-dialog">');
-					tr.push('	<div class="modal-content">');
-					tr.push('		<div class="modal-header">');
-					tr.push('			<h5 class="modal-title text-dark">¿Borrar esta receta?</h5>');
-					tr.push('			<button type="button" class="close" data-dismiss="modal" aria-label="Cerrar">');
-					tr.push('			<span aria-hidden="true">&times;</span></button>');
-					tr.push('		</div>');
-					tr.push('		<div class="modal-body">');
-					tr.push('			<h3 class="text-dark">'+json[i].nombre+'</h3>');
-					tr.push('		</div>');
-					tr.push('		<div class="modal-footer">');
-					tr.push('			<button type="button" class="btn btn-outline pull-left" data-dismiss="modal">No</button>');
-					tr.push('			<a type="button" class="btn btn-outline borrar" href="#" id='+json[i].id+'><i class="fa fa-check"></i>&nbsp;Yes</a>');
-					tr.push('		</div>');
-					tr.push('	</div>');
-					tr.push(' </div>');
-					tr.push('</div>	');				
-					tr.push('</td>');
-					
+				 	tr.push('</td>');		
+				 	
 					tr.push('</tr>');
 				}
 				$('#tabla').append($(tr.join('')));
-			});
-			
-
-			$(document).delegate('.borrar', 'click', function() { 
-						var id = $(this).attr('id');
-						var parent = $(this).parent().parent();
-						$.ajax({
-							type: "DELETE",
-							url: "http://localhost:8080/api/v1/receta/" + id,
-							cache: false,
-							success: function() {
-								parent.fadeOut('slow', function() {
-									$(this).remove();
-								});
-								location.reload(true)
-							}
-						});
-			});
-			
-
+			});						
 		});
 	</script>
 </body>
